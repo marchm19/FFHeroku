@@ -92,8 +92,8 @@ tradeTable = dash_table.DataTable(
     # data=df.to_dict('records'),
     data=dfdict,
     style_data_conditional=conditions,
-    style_cell_conditional=rowWidths,
-    fixed_rows={'headers':True,'data':0}
+    style_cell_conditional=rowWidths
+    # fixed_rows={'headers':True,'data':0}
 )
 rostersColors=[]
 for key in rosters:
@@ -110,8 +110,8 @@ rosterTable = dash_table.DataTable(
     id='rosterTable'+key,
     columns=[{"name":key,"id":key} for key in rosters],
     data=convertRostersTable(),
-    style_header_conditional=rostersColors,
-    fixed_rows={'headers':True,'data':0}
+    style_header_conditional=rostersColors
+    # fixed_rows={'headers':True,'data':0}
 )
 tables.append(rosterTable)
 app.layout = html.Div([tradeTable,html.H1(),rosterTable])
