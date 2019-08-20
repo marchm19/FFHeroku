@@ -63,6 +63,7 @@ for key in rosters:
 
 
 app = dash.Dash(__name__)
+server=app.server
 
 app.layout = dash_table.DataTable(
     id='table',
