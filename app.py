@@ -32,6 +32,7 @@ def checkInRoster(playerName,owner):
           return "Not in Roster"
 
 df = pd.read_csv('FFPreseason.csv',header=2,usecols=[1,2,3,6,9,12,15])
+df = df.dropna(axis=0,how='all',inplace=True)
 dfdict = df.to_dict('records')
 row=0
 for d in dfdict:
