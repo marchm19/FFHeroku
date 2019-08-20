@@ -2,6 +2,8 @@ import dash
 import dash_table
 import pandas as pd
 import requests
+import dash_core_components as dcc
+import dash_html_components as html
 
 rosters = {
   "Yovel":[1,'#EC7063'],
@@ -38,7 +40,7 @@ row=0
 for d in dfdict:
     d['row_id']=row
     row+=1
-conditions=[
+rowWidths=[
     {'if':{'column_id':'Tier'},'width':'20px'},
     {'if':{'column_id':'Trade Value'},'width':'40px'},
     {'if':{'column_id':'Running Back'},'width':'80px'},
@@ -47,6 +49,7 @@ conditions=[
     {'if':{'column_id':'Quarterback'},'width':'80px'},
     {'if':{'column_id':'Defense'},'width':'60px'},
 ]
+conditions=[]
 for key in rosters:
     for player in rosters[key][2]:
         for row  in dfdict:
@@ -62,17 +65,56 @@ for key in rosters:
                  }
                  )
 
+def convertToDict(playerList,owner):
+    playerDictList=[]
+    for player in playerList:
+        playerDictList.append({owner:player})
+    return playerDictList
+
+def convertRostersTable():
+    table = []
+    for i in range(0,19):
+        row={}
+        for key in rosters:
+            try:
+                row[key]=rosters[key][2][i]
+            except:
+                row[key]=''
+        table.append(row)
+    return table
 
 app = dash.Dash(__name__)
 server=app.server
 
-app.layout = dash_table.DataTable(
+tradeTable = dash_table.DataTable(
     id='table',
     columns=[{"name": i, "id": i} for i in df.columns],
     # data=df.to_dict('records'),
     data=dfdict,
-    style_data_conditional=conditions
+    style_data_conditional=conditions,
+    style_cell_conditional=rowWidths,
+    fixed_rows={'headers':True,'data':0}
 )
+rostersColors=[]
+for key in rosters:
+    rostersColors.append(
+                     {
+                         'if':{
+                            'column_id':key,
+                         },
+                         'backgroundColor':rosters[key][1]
+                     }
+                     )
+tables=[tradeTable]
+rosterTable = dash_table.DataTable(
+    id='rosterTable'+key,
+    columns=[{"name":key,"id":key} for key in rosters],
+    data=convertRostersTable(),
+    style_header_conditional=rostersColors,
+    fixed_rows={'headers':True,'data':0}
+)
+tables.append(rosterTable)
+app.layout = html.Div([tradeTable,html.H1(),rosterTable])
 
 
 
